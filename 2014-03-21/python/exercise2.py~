@@ -65,8 +65,8 @@ walls = STRUCT([east, west, south, north, internal]);
 
 top = STRUCT([tri,(T(1)(-14.8)(tri)), sid1, sid2]);
 
-mock_up_3D = STRUCT([COLOR(YELLOW)(steps), COLOR(YELLOW)(walls), COLOR(YELLOW)(roof), COLOR(YELLOW)(top)])
+parthenon = STRUCT([COLOR(YELLOW)(steps), COLOR(YELLOW)(walls), COLOR(YELLOW)(roof), COLOR(YELLOW)(top)])
 
 #view
 
-VIEW(mock_up_3D)
+VIEW(parthenon)

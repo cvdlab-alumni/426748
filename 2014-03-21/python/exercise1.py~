@@ -15,6 +15,6 @@ steps = STRUCT([COLOR(WHITE)(floor1), COLOR(BLUE)(T(3)(0.15)(floor2)),
 roof = STRUCT([COLOR(ORANGE)(T(3)(4)(floor3)),
 	COLOR(PURPLE)(T(3)(5)(floor2))])
  
-two_and_half_model = STRUCT([steps, roof])
+parthenon = STRUCT([steps, roof])
 
-VIEW(two_and_half_model)
+VIEW(parthenon)

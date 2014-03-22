@@ -103,8 +103,8 @@ cap = STRUCT([capx1, capx2, capy1, capy2, capy1i, capy2i])
 
 column = STRUCT([columnx1, columnx2, columny1, columny2, columny1i,columny2i])
 
-solid_model_3D  = STRUCT([COLOR(YELLOW)(steps), COLOR(YELLOW)(walls), COLOR(YELLOW)(roof), COLOR(YELLOW)(top), COLOR(YELLOW)(cap), COLOR(YELLOW)(column)])
+parthenon = STRUCT([COLOR(YELLOW)(steps), COLOR(YELLOW)(walls), COLOR(YELLOW)(roof), COLOR(YELLOW)(top), COLOR(YELLOW)(cap), COLOR(YELLOW)(column)])
 
 #view
 
-VIEW(solid_model_3D)
+VIEW(parthenon)
