@@ -436,6 +436,56 @@ greek_temple = STRUCT([base,columns,T(3)(7)(base), roof])
 temple1 = T([1,2,3])([56,100,42])(R([1,2])(PI/2)(greek_temple))
 templeRow = STRUCT(NN(8)([temple1, T(1)(15)]))
 
+### urban fittings ###
+
+column_base = CUBOID([6,6,1])
+
+V,CV = larRod([2.8,4])([16,6])
+column = STRUCT(MKPOLS([V,CV]))
+
+column_s = STRUCT([column_base, T([1,2,3])([3,3,1])(column)])
+
+V,CV = larRod([2.8,8])([16,6])
+column = STRUCT(MKPOLS([V,CV]))
+
+column_m = STRUCT([column_base, T([1,2,3])([3,3,1])(column)])
+
+V,CV = larRod([2.8,16])([16,6])
+column = STRUCT(MKPOLS([V,CV]))
+column_l = STRUCT([column_base, T([1,2,3])([3,3,1])(column)])
+
+V,CV = larRod([2.8,32])([16,6])
+column = STRUCT(MKPOLS([V,CV]))
+column_xl = STRUCT([column_base, T([1,2,3])([3,3,1])(column), T(3)(33)(column_base)])
+
+columns = STRUCT([column_s, T(1)(12)(column_m), T([1,2])([12,12])(column_l), T(2)(12)(column_xl)])
+
+other_columns = STRUCT([T([1,2])([260,180])(column_xl), T([1,2])([245,87])(STRUCT(NN(2)([column_s, T(1)(10)])))]) 
+
+### trees ###
+
+V,CV = larRod([0.25, 6])([16,6])
+wood = STRUCT(MKPOLS([V,CV]))
+
+V,CV = larBall(2)() 
+V = scalePoints(V,[1,1,3])
+leaves = STRUCT(MKPOLS([V,CV]))
+
+treetype = STRUCT([COLOR([0.36,0.25,0.2])(wood), COLOR(GREEN)(T(3)(8)(leaves))])
+
+tree1 = T([1,2])([227,188])(treetype)
+tree2 = T([1,2])([215,192])(treetype)
+tree3 = T([1,2])([218,179])(treetype)
+tree4 = T([1,2])([200,185])(treetype)
+tree5 = T([1,2])([230,180])(treetype)
+tree6 = T([1,2])([257,140])(treetype)
+tree7 = T([1,2])([265,148])(treetype)
+tree8 = T([1,2])([270,136])(treetype)
+tree9 = T([1,2])([255,152])(treetype)
+
+trees = STRUCT([tree1,tree2,tree3,tree4,tree5,
+	tree6,tree7,tree8,tree9])
+
 ### traslateParthenon ###
 
 t_parthenon = R([1,2])(PI/10)(T([1,2,3])([70,7.5,42])(parthenon))
@@ -444,6 +494,8 @@ t_parthenon = R([1,2])(PI/10)(T([1,2,3])([70,7.5,42])(parthenon))
 
 athens = STRUCT([COLOR([0.8,0.47,0.13])(ground), COLOR([0.8,0.47,0.13])(acropolis3D), 
 	COLOR([0.86,0.86,0.56])(t_parthenon), COLOR([0.86,0.86,0.56])(houses), 
-	COLOR([0.86,0.86,0.56])(theater), COLOR([0.86,0.86,0.56])(templeRow)])
+	COLOR([0.86,0.86,0.56])(theater), COLOR([0.86,0.86,0.56])(templeRow), 
+	COLOR([0.86,0.86,0.56])(T([1,2,3])([150,58,42])(R([1,2])(-PI/6)(columns))), 
+	COLOR([0.86,0.86,0.56])(other_columns), trees])
 
 VIEW(athens)
