@@ -24,13 +24,6 @@ def larIntervals(shape):
 		return V,CV
 	return larIntervals0
 
-def larMap(coordFuncs):
-	def larMap0(domain):
-		V,CV = domain
-		V = TRANS(CONS(coordFuncs)(V))
-		return V,CV
-	return larMap0
-
 def checkModel(model):
 	V,CV = model; n = len(V)
 	vertDict = defaultdict(list)
@@ -44,26 +37,6 @@ def checkModel(model):
 	CV = [[invertedindex[v] for v in cell] for cell in CV]
 	CV = [list(set(cell)) for cell in CV if len(set(cell))==len(cell)]
 	return V, CV
-
-def larDisk(radius=1.):
-	def larDisk0(shape=[36,1]):
-		domain = larIntervals(shape)([2*PI,radius])
-		V,CV = domain
-		x = lambda V : [p[1]*COS(p[0]) for p in V]
-		y = lambda V : [p[1]*SIN(p[0]) for p in V]
-		return larMap([x,y])(domain)
-	return larDisk0
-
-def larRing(params):
-	r1,r2 = params
-	def larRing0(shape=[36,1]):
-		V,CV = larIntervals(shape)([2*PI,r2-r1])
-		V = translatePoints(V,[0,r1])
-		domain = V,CV
-		x = lambda V : [p[1] * COS(p[0]) for p in V]
-		y = lambda V : [p[1] * SIN(p[0]) for p in V]
-		return larMap([x,y])(domain)
-	return larRing0
 
 def larCylinder(params):
 	radius,height = params
@@ -102,29 +75,6 @@ def larSphere(radius=1):
 		return larMap([x,y,z])(domain)
 	return larSphere0
 
-def larToroidal(params):
-	r,R = params
-	def larToroidal0(shape=[24,36]):
-		domain = larIntervals(shape)([2*PI,2*PI])
-		V,CV = domain
-		x = lambda V : [(R + r*COS(p[0])) * COS(p[1]) for p in V]
-		y = lambda V : [(R + r*COS(p[0])) * SIN(p[1]) for p in V]
-		z = lambda V : [-r * SIN(p[0]) for p in V]
-		return larMap([x,y,z])(domain)
-	return larToroidal0
-
-def larCrown(params):
-	r,R = params
-	def larCrown0(shape=[24,36]):
-		V,CV = larIntervals(shape)([PI,2*PI])
-		V = translatePoints(V,[-PI/2,0])
-		domain = V,CV
-		x = lambda V : [(R + r*COS(p[0])) * COS(p[1]) for p in V]
-		y = lambda V : [(R + r*COS(p[0])) * SIN(p[1]) for p in V]
-		z = lambda V : [-r * SIN(p[0]) for p in V]
-		return larMap([x,y,z])(domain)
-	return larCrown0
-
 def larBall(radius=1):
 	def larBall0(shape=[18,36]):
 		V,CV = checkModel(larSphere(radius)(shape))
@@ -144,13 +94,6 @@ def larHalfRod(params):
 		V,CV = checkModel(larHalfCylinder(params)(shape))
 		return V,[range(len(V))]
 	return larHalfRod0
-
-def larPizza(params):
-	r,R= params
-	def larPizza0(shape=[24,36]):
-		V,CV = checkModel(larCrown(params)(shape))
-		return V,[range(len(V))]
-	return larPizza0
 
 ### floors ###
 
@@ -336,9 +279,14 @@ V = [[10,35,0],[50,10,0],[200,23,0],[220,35,0],[210,100,0],[180,130,0],[140,130,
 	 [14,40,42],[60,14,42],[180,28,42],[205,40,42],[195,90,42],[178,110,42],[140,110,42],[146,137,42],[35,120,42],[18,90,42]]
 acropolis3D = JOIN(AA(MK)(V))
 
+V = [[10,35,0],[8,90,0],[14,40,42],[18,90,42],[-35,70,0],[-25,110,0]]
+descent = JOIN(AA(MK)(V))
+
+acropolis3D = STRUCT([acropolis3D, descent])
+
 ### ground ###
 
-V = [[0,0],[280,0],[280,200],[0,200]]
+V = [[-40,0],[280,0],[280,200],[-40,200]]
 ground = JOIN(AA(MK)(V))
 
 ### simple house (cuboid) XD ###
