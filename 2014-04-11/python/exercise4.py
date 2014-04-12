@@ -350,8 +350,9 @@ house4 = T([1,2])([80,160])(CUBOID([85,15,10]))
 house5 = T([1,2])([215,-105])(house2)
 house6 = T([1,2])([230,56])(CUBOID([6,9,9]))
 house7 = T([1,2])([235,23])(CUBOID([17,20,10]))
+house8 = T([1,2,3])([177,56,42])(R([1,2])(PI/5)(CUBOID([13,18,9])))
 
-houses = STRUCT([house1,house2,house3,house4,house5,house6,house7])
+houses = STRUCT([house1,house2,house3,house4,house5,house6,house7,house8])
 
 ### theater ###
 
@@ -438,29 +439,31 @@ templeRow = STRUCT(NN(8)([temple1, T(1)(15)]))
 
 ### urban fittings ###
 
-column_base = CUBOID([6,6,1])
+column_base = CUBOID([3,3,1])
 
-V,CV = larRod([2.8,4])([16,6])
+V,CV = larRod([1.4,2])([16,6])
 column = STRUCT(MKPOLS([V,CV]))
 
-column_s = STRUCT([column_base, T([1,2,3])([3,3,1])(column)])
+column_s = STRUCT([column_base, T([1,2,3])([1.5,1.5,1])(column)])
 
-V,CV = larRod([2.8,8])([16,6])
+V,CV = larRod([1.4,4])([16,6])
 column = STRUCT(MKPOLS([V,CV]))
 
-column_m = STRUCT([column_base, T([1,2,3])([3,3,1])(column)])
+column_m = STRUCT([column_base, T([1,2,3])([1.5,1.5,1])(column)])
 
-V,CV = larRod([2.8,16])([16,6])
+V,CV = larRod([1.4,8])([16,6])
 column = STRUCT(MKPOLS([V,CV]))
-column_l = STRUCT([column_base, T([1,2,3])([3,3,1])(column)])
+column_l = STRUCT([column_base, T([1,2,3])([1.5,1.5,1])(column)])
 
-V,CV = larRod([2.8,32])([16,6])
+V,CV = larRod([1.4,16])([16,6])
 column = STRUCT(MKPOLS([V,CV]))
-column_xl = STRUCT([column_base, T([1,2,3])([3,3,1])(column), T(3)(33)(column_base)])
+column_xl = STRUCT([column_base, T([1,2,3])([1.5,1.5,1])(column), T(3)(17)(column_base)])
 
-columns = STRUCT([column_s, T(1)(12)(column_m), T([1,2])([12,12])(column_l), T(2)(12)(column_xl)])
+columns = STRUCT([column_s, T(1)(6)(column_m), T([1,2])([6,6])(column_l), T(2)(6)(column_xl)])
 
-other_columns = STRUCT([T([1,2])([260,180])(column_xl), T([1,2])([245,87])(STRUCT(NN(2)([column_s, T(1)(10)])))]) 
+other_columns = STRUCT([T([1,2])([260,180])(column_xl), 
+	T([1,2])([245,87])(STRUCT(NN(2)([column_s, T(1)(10)]))),
+	T([1,2])([146, 185])(column_m), T([1,2])([155, 185])(column_l)]) 
 
 ### trees ###
 
@@ -482,9 +485,12 @@ tree6 = T([1,2])([257,140])(treetype)
 tree7 = T([1,2])([265,148])(treetype)
 tree8 = T([1,2])([270,136])(treetype)
 tree9 = T([1,2])([255,152])(treetype)
+tree10 = T([1,2])([56,169])(treetype)
+tree11 = T([1,2])([64,173])(treetype)
+tree12 = T([1,2])([68,165])(treetype)
 
 trees = STRUCT([tree1,tree2,tree3,tree4,tree5,
-	tree6,tree7,tree8,tree9])
+	tree6,tree7,tree8,tree9,tree10,tree11,tree12])
 
 ### traslateParthenon ###
 
@@ -494,8 +500,8 @@ t_parthenon = R([1,2])(PI/10)(T([1,2,3])([70,7.5,42])(parthenon))
 
 athens = STRUCT([COLOR([0.8,0.47,0.13])(ground), COLOR([0.8,0.47,0.13])(acropolis3D), 
 	COLOR([0.86,0.86,0.56])(t_parthenon), COLOR([0.86,0.86,0.56])(houses), 
-	COLOR([0.86,0.86,0.56])(theater), COLOR([0.86,0.86,0.56])(templeRow), 
-	COLOR([0.86,0.86,0.56])(T([1,2,3])([150,58,42])(R([1,2])(-PI/6)(columns))), 
+	COLOR([0.86,0.86,0.56])(theater), COLOR([0.86,0.86,0.56])(T([1,2])([23,-32])(R([1,2])(PI/10)(templeRow))), 
+	COLOR([0.86,0.86,0.56])(T([1,2,3])([145,58,42])(R([1,2])(-PI/6)(columns))), 
 	COLOR([0.86,0.86,0.56])(other_columns), trees])
 
 VIEW(athens)

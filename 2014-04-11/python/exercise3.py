@@ -350,8 +350,9 @@ house4 = T([1,2])([80,160])(CUBOID([85,15,10]))
 house5 = T([1,2])([215,-105])(house2)
 house6 = T([1,2])([230,56])(CUBOID([6,9,9]))
 house7 = T([1,2])([235,23])(CUBOID([17,20,10]))
+house8 = T([1,2,3])([177,56,42])(R([1,2])(PI/5)(CUBOID([13,18,9])))
 
-houses = STRUCT([house1,house2,house3,house4,house5,house6,house7])
+houses = STRUCT([house1,house2,house3,house4,house5,house6,house7,house8])
 
 ### theater ###
 
@@ -444,6 +445,6 @@ t_parthenon = R([1,2])(PI/10)(T([1,2,3])([70,7.5,42])(parthenon))
 
 athens = STRUCT([COLOR([0.8,0.47,0.13])(ground), COLOR([0.8,0.47,0.13])(acropolis3D), 
 	COLOR([0.86,0.86,0.56])(t_parthenon), COLOR([0.86,0.86,0.56])(houses), 
-	COLOR([0.86,0.86,0.56])(theater), COLOR([0.86,0.86,0.56])(templeRow)])
+	COLOR([0.86,0.86,0.56])(theater), COLOR([0.86,0.86,0.56])(T([1,2])([23,-32])(R([1,2])(PI/10)(templeRow)))])
 
-VIEW(athens)
+VIEW(athens) (T([1,2])([23,-32])(R([1,2])(PI/10)(templeRow)))
