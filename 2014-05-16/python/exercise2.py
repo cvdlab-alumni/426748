@@ -23,26 +23,21 @@ start = 0;
 ### curve ###
 
 piastrella = CUBOID([1,1,0.1])
+controlpoints = [[0,0],[1,0],[1,1],[0,1],[0,0]]
 
-points = [[0,.5],[.5,.5],[.5,0]]
+points = [[0,.6],[.1,.3],[.4,.2],[.5,0]]
 dom = larDomain([32])
 mapping = larBezierCurve(points)
 obj = larMap(mapping)(dom)
-part1 = (STRUCT(MKPOLS(obj)))
+part1 = (STRUCT(MKPOLS(obj)+[POLYLINE(controlpoints)]))
 
-points = [[.5,0],[.5,.5],[1,.5]]
-dom = larDomain([32])
-mapping = larBezierCurve(points)
-obj = larMap(mapping)(dom)
-part2 = (STRUCT(MKPOLS(obj)))
-
-points = [[.5,0],[.5,.5],[1,.5]]
+points = [[.1,1],[.3,.6],[.7,.4],[.9,0]]
 dom = larDomain([32])
 mapping = larBezierCurve(points)
 obj = larMap(mapping)(dom)
 part2 = (STRUCT(MKPOLS(obj)))
 
-points = [[1,.5],[.5,.5],[.5,1]]
+points = [[.6,1],[.6,.6],[.8,.4],[1,0]]
 dom = larDomain([32])
 mapping = larBezierCurve(points)
 obj = larMap(mapping)(dom)
@@ -56,7 +51,9 @@ part4 = (STRUCT(MKPOLS(obj)))
 
 decoration = STRUCT([part1,part2,part3,part4])
 
-piastrella_decorata = STRUCT([piastrella,T(3)(0.1)((COLOR(BLACK)(decoration)))])
+piastrella_decorata = STRUCT([piastrella,T(3)(0.1)((COLOR([0.5,0.5,0.5])(decoration)))])
+
+VIEW(piastrella_decorata)
 
 ### prima stanza ###
 
@@ -280,7 +277,7 @@ walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)
 
 ruggero3DP = T([1,2])([28,18])(STRUCT(MKPOLS(walls)))
 
-floor = STRUCT(NN(17)([STRUCT(NN(11)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
+floor = STRUCT(NN(18)([STRUCT(NN(11)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
 ruggero3DPP = STRUCT([ruggero3DP,T([1,2,3])([28,18,.1])(floor)])
 
 start = start + length
@@ -348,7 +345,9 @@ scale = STRUCT([scalaA,scalaB,scalaC,scalaD])
 entrata = T(1)(-47)(CUBOID([94,60,10.2]))
 entratabuco = CUBOID([57,20,10.2])
 entrata = DIFFERENCE([entrata,T([1,2])([-47,20])(entratabuco)]) 
-roof =  T([1,3])([-47,91.6])(CUBOID([94,60,1]))
+roof = T([1,3])([-47,91.8])(CUBOID([94,60,5]))
+roof0 = T([1,2,3])([-46,1,92.8])(CUBOID([92,58,4]))
+roof = DIFFERENCE([roof,roof0])
 palazzo_parziale = STRUCT([COLOR([.5,.5,.5])(entrata),T(3)(10.2)(parziale)])
 palazzo = STRUCT([COLOR([.5,.5,.5])(entrata),T(3)(10.2)(scale),COLOR([.5,.5,.5])(roof)])
 
@@ -396,7 +395,7 @@ better_scale = STRUCT([better_piano_di_scale,T(3)(10.2)(better_piano_di_scale),
 better_palazzo_parziale = STRUCT([T([1,2,3])([-10,30,0.1])(better_scale),palazzo_parziale])
 
 VIEW(better_palazzo_parziale)
-
+T([1,3])([-47,91.6])(CUBOID([94,60,5]))
 palazzo_parziale = STRUCT([T([1,2,3])([-5,20,0.1])(scale),palazzo_parziale])
 
 VIEW(palazzo_parziale)
