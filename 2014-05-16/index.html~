@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>Homework3</title>
+	</head>
+	<body>
+		<h1>BlockLandia</h1>
+		<h2>Biagio Caldararo</h2>
+		<h3>426748</h3>
+		<p> Rappresentazione grafica in 3D di un appartamento in particolare delle sue stanze.</p>
+		<p> Rappresentazione di un comune condominio comprendente la tromba delle scale (2 differenti) </p> 
+                <p> e una possibile pavimentazione realizzata prendendo spunto da un tema marmoreo.</p>
+		<p> E' stata inoltre implementata una funzione che automatizza la libreria </p>
+		<p> Immagini </p>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-04-11/images/Screenshot%20from%202014-04-12%2015:46:43.png">immagine 1</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-04-11/images/Screenshot%20from%202014-04-12%2015:47:56.png">immagine 2</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-04-11/images/Screenshot%20from%202014-04-12%2015:49:23.png">immagine 3</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-04-11/images/Screenshot%20from%202014-04-12%2015:50:54.png">immagine 4</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-04-11/images/Screenshot%20from%202014-04-12%2015:51:56.png">immagine 5</a>
+		<p> Esercizi </p>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-05-16/python/exercise1.py">esercizio 1</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-05-16/python/exercise2.py">esercizio 2</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-05-16/python/exercise3.py">esercizio 3</a>
+		<a href="https://github.com/cvdlab-cg/426748/blob/master/2014-05-16/python/exercise4.py">esercizio 4</a>
+	</body>
+</html>
