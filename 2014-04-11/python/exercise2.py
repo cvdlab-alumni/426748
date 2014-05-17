@@ -13,7 +13,7 @@ def scalePoints (points, svect):
 	return [AA(PROD)(TRANS([p,svect])) for p in points]
 
 def larDomain(shape):
-	V,CV = larSimplexGrid(shape)
+	V,CV = larSimplexGrid1(shape)
 	V = scalePoints(V, [1./d for d in shape])
 	return V,CV
 
