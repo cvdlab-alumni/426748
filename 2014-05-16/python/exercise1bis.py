@@ -5,30 +5,30 @@ from larcc import *
 DRAW = COMP([VIEW,STRUCT,MKPOLS])
 
 def generateEnumeratedSkeleton(values):
-   x,y,z = values
-   master = assemblyDiagramInit([len(x),len(y),len(z)])([x,y,z])
-   V,CV = master
-   skel = cellNumbering(master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(CV)),CYAN,4)
-   return master, skel
+	x,y,z = values
+	master = assemblyDiagramInit([len(x),len(y),len(z)])([x,y,z])
+	V,CV = master
+	skel = cellNumbering(master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(CV)),CYAN,4)
+	return master, skel
 
 def removeCells(master, cells):
-   V,CV = master
-   master = V,[cell for k,cell in enumerate(CV) if not (k in cells)]
-   V,CV = master
-   skel = cellNumbering(master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(CV)),CYAN,2)
-   return master, skel
+	V,CV = master
+	master = V,[cell for k,cell in enumerate(CV) if not (k in cells)]
+	V,CV = master
+	skel = cellNumbering(master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(CV)),CYAN,2)
+	return master, skel
 
 def cellPartitioning(cell,values,master):
-   x,y,z = values
-   diagram = assemblyDiagramInit([len(x),len(y),len(z)])([x,y,z])
-   master = diagram2cell(diagram, master, cell)
-   return master
+	x,y,z = values
+	diagram = assemblyDiagramInit([len(x),len(y),len(z)])([x,y,z])
+	master = diagram2cell(diagram, master, cell)
+	return master
 
 def multiCellPartitioning(cells,diagrams,master):
-   for i in range(len(cells)):
-      master = cellPartitioning(cells[i],diagrams[i],master)
-   skel = cellNumbering (master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(master[1])),CYAN,2)
-   return master, skel
+	for i in range(len(cells)):
+		master = cellPartitioning(cells[i],diagrams[i],master)
+	skel = cellNumbering (master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(master[1])),CYAN,2)
+	return master, skel
 
 #### struttura ####
 
@@ -39,10 +39,11 @@ inside = [25,27,29,69,91,113,73,75,77,95,97,99,117,119,121,139,141,143,157,161,1
 
 cells = extra + inside
 master, skel = generateEnumeratedSkeleton(values)
-VIEW(skel)
+#VIEW(skel)
 
 master, skel = removeCells(master,cells)
 VIEW(skel)
+#DRAW(master)
 
 #porta dim [3,1,8]
 
@@ -85,7 +86,16 @@ VIEW(skel)
 
 ### rimuovo porte e finestre ###
 
-cells = [256,252,242,235,225,212,194,206,198,188,182,179,177,175,173,171,169,167,238,248,230,220,161]
+cells = [256,252,242,235,225,212,194,206,198,188,182,179,177,175,173,171,169,167]
 
 master,skel = removeCells(master,cells)
 DRAW(master)
+
+
+
+
+
+
+
+
+

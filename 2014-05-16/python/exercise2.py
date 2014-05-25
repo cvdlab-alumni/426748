@@ -1,24 +1,34 @@
 from larcc import *
 
-### funzione modificate per la numerazione ###
+### funzioni supporto ###
 
 DRAW = COMP([VIEW,STRUCT,MKPOLS])
 
-def cellNumberingMod (larModel,hpcModel):
-   V,CV = larModel
-   def cellNumbering0 (cellSubset,color=WHITE,scalingFactor=1,start=0):
-      text = TEXTWITHATTRIBUTES (TEXTALIGNMENT='centre', TEXTANGLE=0, 
-                     TEXTWIDTH=0.1*scalingFactor, 
-                     TEXTHEIGHT=0.2*scalingFactor, 
-                     TEXTSPACING=0.025*scalingFactor)
-      hpcList = [hpcModel]
-      for cell in cellSubset:
-         point = CCOMB([V[v] for v in CV[cell]])
-         hpcList.append(T([1,2,3])(point)(COLOR(color)(text(str(cell+start)))))
-      return STRUCT(hpcList)
-   return cellNumbering0
+def generateEnumeratedSkeleton(values):
+   x,y,z = values
+   master = assemblyDiagramInit([len(x),len(y),len(z)])([x,y,z])
+   V,CV = master
+   skel = cellNumbering(master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(CV)),CYAN,4)
+   return master, skel
 
-start = 0;
+def removeCells(master, cells):
+   V,CV = master
+   master = V,[cell for k,cell in enumerate(CV) if not (k in cells)]
+   V,CV = master
+   skel = cellNumbering(master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(CV)),CYAN,2)
+   return master, skel
+
+def cellPartitioning(cell,values,master):
+   x,y,z = values
+   diagram = assemblyDiagramInit([len(x),len(y),len(z)])([x,y,z])
+   master = diagram2cell(diagram, master, cell)
+   return master
+
+def multiCellPartitioning(cells,diagrams,master):
+   for i in range(len(cells)):
+      master = cellPartitioning(cells[i],diagrams[i],master)
+   skel = cellNumbering (master,SKEL_1(STRUCT(MKPOLS(master))))(range(len(master[1])),CYAN,2)
+   return master, skel
 
 ### curve ###
 
@@ -55,286 +65,97 @@ piastrella_decorata = STRUCT([piastrella,T(3)(0.1)((COLOR([0.5,0.5,0.5])(decorat
 
 VIEW(piastrella_decorata)
 
-### prima stanza ###
+#### struttura ####
 
-master = assemblyDiagramInit([2,3,2])([[1,14],[1,13,1],[.1,10]])
-V,CV = master
-length = len(CV)
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-biagio = cellNumberingMod (master,hpc)(range(length),CYAN,4)
+values =[[1,14,1,3,1,2,1,6,1,10,1,6,1],[1,6,1,6,1,2,1,6,1,4,1],[.1,10]]
 
-toRemove = [9] 
-walls = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)] 
-biagio3D = STRUCT(MKPOLS(walls))
+extra = range(10,22)+range(32,44)+range(58,66)+range(80,88)+range(102,110)+range(124,132)+ range(150,154)+range(172,176)
+inside = [25,27,29,69,91,113,73,75,77,95,97,99,117,119,121,139,141,143,157,161,163,165,169,179,201,205,207,209,213,215,217,235,237,239,245,247,249,251,253,257,259,261]
 
-### finestra ###
+cells = extra + inside
+master, skel = generateEnumeratedSkeleton(values)
+#VIEW(skel)
 
-toMerge = 7
-diagram = assemblyDiagramInit([3,1,3])([[4,4,6],[1],[3,4,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
+master, skel = removeCells(master,cells)
+#VIEW(skel)
 
-toRemove = [14]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
+#porta dim [3,1,8]
 
-biagio3DP = STRUCT(MKPOLS(walls))
+d132 = [[1],[2,3,1],[8,2]]
+d103 = [[1],[2,3,1],[8,2]]
+d95 = [[1],[2,3,1],[8,2]]
+d88 = [[3,2,1],[1],[8,2]]
+d85 = [[2,3,1],[1],[8,2]]
+d80 = [[2,3,1],[1],[8,2]]
+d55 = [[1,1],[1],[8,2]] 
+d45 = [[1],[1],[8,2]]
+d35 = [[2,1],[1],[8,2]]
+d24 = [[1],[3,3],[8,2]]
+d11 = [[5,3,6],[1],[8,2]]
 
-floor = STRUCT(NN(14)([STRUCT(NN(13)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
-biagio3DPP = STRUCT([biagio3DP,T([1,2,3])([1,1,.1])(floor)])
+#finestra dim [3,1,4]
 
-start = start + length
+d32 = [[2,1],[1],[4,4,2]]
+d42 = [[1],[1],[4,4,2]]
+d52 = [[1,1],[1],[4,4,2]]
+d77 = [[1,3,2],[1],[4,4,2]]
+d173 = [[1],[1,3,2],[4,4,2]]
 
-### stanza 2 e 3 ###
+#balcone
 
-master = assemblyDiagramInit([5,3,2])([[1,6,1,17,1],[1,6,1],[.1,10]])
-V,CV = master
-length= len(CV) 
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-bagno_luigi = T(1)(14)(cellNumberingMod (master,hpc)(range(length),CYAN,4,start))
+d145 = [[1],[1],[5,5]]
+d159 = [[1],[1],[5,5]]
+d161 = [[1],[6],[5,5]]
+d163 = [[1],[1],[5,5]]
+d165 = [[1],[6],[5,5]]
+d167 = [[1],[1],[5,5]]
+d169 = [[1],[2],[5,5]]
 
-toRemove = [9,21] 
-walls = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)] 
-bagno_luigi3D = T(1)(14)(STRUCT(MKPOLS(walls)))
+cells = [173,169,167,165,163,161,159,145,132,103,95,88,85,80,77,55,52,45,42,35,32,24,11]
 
-### porta stanza 2 ###
+diagrams = [d173,d169,d167,d165,d163,d161,d159,d145,d132,d103,d95,d88,d85,d80,d77,d55,d52,d45,d42,d35,d32,d24,d11] 
 
-toMerge = 10
-diagram = assemblyDiagramInit([3,1,2])([[1,4,1],[1],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
+master,skel = multiCellPartitioning(cells,diagrams,master)
+#VIEW(skel)
 
-toRemove = [29]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
+### rimuovo porte e finestre ###
 
-### porta stanza 3 ###
+cells = [256,252,242,235,225,212,194,206,198,188,182,179,177,175,173,171,169,167,238,248,230,220,161]
 
-toMerge = 20
-diagram = assemblyDiagramInit([3,1,2])([[1,4,12],[1],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [33]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-### finestra  stanza 2###
-
-toMerge = 7
-diagram = assemblyDiagramInit([3,1,3])([[2,3,1],[1],[3,4,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [39]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-### finestra stanza 3 ###
-
-toMerge = 16
-diagram = assemblyDiagramInit([3,1,3])([[2,5,10],[1],[3,4,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [46]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-bagno_luigi3DP = T(1)(14)(STRUCT(MKPOLS(walls)))
-
-floor = STRUCT(NN(24)([STRUCT(NN(6)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
-bagno_luigi3DPP = STRUCT([bagno_luigi3DP,T([1,2,3])([15,1,.1])(floor)])
-
-start = start + length
-
-### stanza 4 e 5 ###
-
-master = assemblyDiagramInit([5,2,2])([[1,13,1,10,1],[9,1],[.1,10]])
-V,CV = master
-length= len(CV) 
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-salotto_cucina = T([1,2])([14,8])(cellNumberingMod (master,hpc)(range(length),CYAN,4,start))
-
-toRemove = [5,13] 
-walls = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)] 
-salotto_cucina3D = T([1,2])([14,8])(STRUCT(MKPOLS(walls)))
-
-### porta stanza 4 ###
-
-toMerge = 1
-diagram = assemblyDiagramInit([1,3,2])([[1],[1,4,4],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [19]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-### porta stanza 4 bis ###
-
-toMerge = 5
-diagram = assemblyDiagramInit([3,1,2])([[8,4,1],[1],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [23]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-### porta stanza 5 ###
-
-toMerge = 6
-diagram = assemblyDiagramInit([1,3,2])([[1],[2,4,3],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [27]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-### porta stanza 5 bis ###
-
-toMerge = 12
-diagram = assemblyDiagramInit([1,3,2])([[1],[3,4,2],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [31]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-salotto_cucina3DP = T([1,2])([14,8])(STRUCT(MKPOLS(walls)))
-
-floor = STRUCT(NN(25)([STRUCT(NN(11)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
-salotto_cucina3DPP = STRUCT([salotto_cucina3DP,T([1,2,3])([15,7,.1])(floor)])
-
-start = start + length
-
-### stanza 6 ###
-
-master = assemblyDiagramInit([2,2,2])([[1,9],[6,1],[.1,10]])
-V,CV = master
-length = len(CV) 
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-ingresso = T([1,2])([18,18])(cellNumberingMod (master,hpc)(range(length),CYAN,4,start))
-
-toRemove = [5] 
-walls = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)] 
-ingresso3D = T([1,2])([18,18])(STRUCT(MKPOLS(walls)))
-
-### porta stanza 6 ###
-
-toMerge = 6
-diagram = assemblyDiagramInit([3,1,2])([[1,4,4],[1],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [8]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-ingresso3DP = T([1,2])([18,18])(STRUCT(MKPOLS(walls)))
-
-floor = STRUCT(NN(9)([STRUCT(NN(7)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
-ingresso3DPP = STRUCT([ingresso3DP,T([1,2,3])([19,18,.1])(floor)])
-
-start = start + length
-
-### stanza 7 ###
-
-master = assemblyDiagramInit([3,2,2])([[1,17,1],[11,1],[.1,10]])
-V,CV = master
-length= len(CV) 
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-ruggero = T([1,2])([28,18])(cellNumberingMod (master,hpc)(range(length),CYAN,4,start))
-
-toRemove = [5] 
-walls = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)] 
-ruggero3D = T([1,2])([28,18])(STRUCT(MKPOLS(walls)))
-
-### porta stanza 7 ###
-
-toMerge = 1
-diagram = assemblyDiagramInit([1,3,2])([[1],[1,4,6],[7,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [12]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-### finsestra ###
-
-toMerge = 7
-diagram = assemblyDiagramInit([1,3,3])([[1],[2,5,4],[3,4,3]])
-walls = diagram2cell(diagram, walls, toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(walls)))
-hpc = cellNumbering (walls,hpc)(range(len(walls[1])),CYAN,2)
-
-toRemove = [18]
-walls = walls[0], [cell for k,cell in enumerate(walls[1]) if not (k in toRemove)]
-
-ruggero3DP = T([1,2])([28,18])(STRUCT(MKPOLS(walls)))
-
-floor = STRUCT(NN(18)([STRUCT(NN(11)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
-ruggero3DPP = STRUCT([ruggero3DP,T([1,2,3])([28,18,.1])(floor)])
-
-start = start + length
-
-### balcone ###
-
-master = assemblyDiagramInit([2,2,2])([[6,1],[1,16],[.1,5]])
-V,CV = master
-length= len(CV) 
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-balcone = T(1)(40)(cellNumberingMod (master,hpc)(range(length),CYAN,4,start))
-
-toRemove = [3] 
-walls = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)] 
-balcone3D = T(1)(40)(STRUCT(MKPOLS(walls)))
-
-floor = STRUCT(NN(6)([STRUCT(NN(16)([COLOR([0.52,.3,.2])(piastrella), T(2)(1)])), T(1)(1)]))
-balcone3DPP = STRUCT([balcone3D,T([1,2,3])([40,1,.1])(floor)])
-
-start = start + length
-
-### muro a buffo ###
-
-master = assemblyDiagramInit([1,1,2])([[7],[1],[.1,10]])
-V,CV = master
-length = len(CV) 
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-wall = T([1,2])([40,17])(cellNumberingMod (master,hpc)(range(length),CYAN,4,start))
-
-wall3D = T([1,2])([40,17])(STRUCT(MKPOLS(master)))
-
-start = start + length
-
-### all together ###
-
-appartamento = STRUCT([biagio,bagno_luigi,salotto_cucina, ingresso, ruggero, balcone, wall]) 
-appartamento3D = STRUCT([biagio3D,bagno_luigi3D,salotto_cucina3D, ingresso3D, ruggero3D, balcone3D, wall3D]) 
-appartamento3DP = STRUCT([biagio3DP,bagno_luigi3DP,salotto_cucina3DP, ingresso3DP, ruggero3DP, balcone3D, wall3D])
-appartamento3DPP = STRUCT([biagio3DPP,bagno_luigi3DPP,salotto_cucina3DPP, ingresso3DPP, ruggero3DPP, balcone3DPP, wall3D])  
-
+master,skel = removeCells(master,cells)
+appartamento = STRUCT(MKPOLS(master))
 #VIEW(appartamento)
-#VIEW(appartamento3D)
-#VIEW(appartamento3DP)
-VIEW(appartamento3DPP)
+
+### piastrelle ###
+
+floor1 = STRUCT(NN(46)([STRUCT(NN(13)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
+floor2 = STRUCT(NN(31)([STRUCT(NN(3)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
+floor3 = STRUCT(NN(24)([STRUCT(NN(8)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
+floor4 = STRUCT(NN(17)([STRUCT(NN(4)([piastrella_decorata, T(2)(1)])), T(1)(1)]))
+
+floor = STRUCT([floor1,T([1,2])([15,13])(floor2),T([1,2])([22,16])(floor3),
+   T([1,2])([29,24])(floor4)])
+
+appartamento0 = STRUCT([appartamento,T([1,2])([1,1])(floor)])
+
+VIEW(appartamento0)
 
 ### serie di appartamenti ###
 
 ### condominio ###
 
-pianerottolo = CUBOID([47,30,0.1])
+pianerottolo = CUBOID([48,30,0.1])
 bucoscale = CUBOID([10,20,0.1])
 pianerottolo = DIFFERENCE([pianerottolo,T(2)(20)(bucoscale)])
-appartamento3DP = STRUCT([COLOR([.5,.5,.5])(pianerottolo),T(3)(0.1)(appartamento3DP)])
+appartamento = STRUCT([COLOR([.5,.5,.5])(pianerottolo),T(3)(0.1)(appartamento)])
 
-scalaA = STRUCT([appartamento3DP,T(3)(10.2)(appartamento3DP),T(3)(20.4)(appartamento3DP),
-   T(3)(30.6)(appartamento3DP),T(3)(40.8)(appartamento3DP),T(3)(51)(appartamento3DP),T(3)(61.2)(appartamento3DP),
-   T(3)(71.4)(appartamento3DP)])
+#VIEW(appartamento)
+
+scalaA = STRUCT([appartamento,T(3)(10.2)(appartamento),T(3)(20.4)(appartamento),
+   T(3)(30.6)(appartamento),T(3)(40.8)(appartamento),T(3)(51)(appartamento),T(3)(61.2)(appartamento),
+   T(3)(71.4)(appartamento)])
+
+VIEW(scalaA)
 
 scalaB = S(1)(-1)(scalaA)
 scalaC = T(2)(60)(S(2)(-1)(scalaA))
@@ -342,6 +163,9 @@ scalaD = S(1)(-1)(scalaC)
 
 parziale = STRUCT([scalaA,scalaB])
 scale = STRUCT([scalaA,scalaB,scalaC,scalaD])
+
+VIEW(scale)
+
 entrata = T(1)(-47)(CUBOID([94,60,10.2]))
 entratabuco = CUBOID([57,20,10.2])
 entrata = DIFFERENCE([entrata,T([1,2])([-47,20])(entratabuco)]) 
