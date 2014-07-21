@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html>
+ <head> 
+  <title> Project </title> 
+  <style>
+    body{
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #stats {  /* Align stats top-left */
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+  </style> 
+  </head>
+  <body>
+  <video id="video" src="assets/movies/Milito.mp4" controls="false" autoplay="false"></video> 
+  <!-- JavaScript libraries -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+  <script src="assets/libs/TrackballControls.js"></script>
+  <script src="assets/libs/THREEx.KeyboardState.js"></script>
+  <script src="assets/libs/csg.js"></script>
+  <script src="assets/libs/ThreeCSG.js"></script>
+  <script src="assets/libs/OBJLoader.js"></script>
+  <script src="assets/libs/MTLLoader.js"></script>
+  <script src="assets/libs/OBJMTLLoader.js"></script>
+  <script src="assets/libs/tween.min.js"></script>
+  <script src="scripts/Walls.js"></script>
+  <script src="scripts/Doors and Windows.js"></script>
+  <script src="scripts/Animations.js"></script>
+  <script src="scripts/3DModels.js"></script>
+  <script src="scripts/Video.js"></script>
+
+  <!-- Javascript code that runs our Three.js examples --> 
+  <script>
+    // once everything is loaded, we run our Three.js stuff.
+	
+	// global variables
+	
+	var keyboard = new THREEx.KeyboardState();
+	var clock = new THREE.Clock();
+	var puntatoreCamera, camera, inspectedCamera, stats, trackballControls, webGLRenderer, texture, scene, renderCamera;
+	
+	var house = new THREE.Object3D();
+	
+	function init() {
+
+      stats = initStats();
+
+      // create a scene, that will hold all our elements such as objects, cameras and lights.
+      scene = new THREE.Scene();
+
+      // create a camera, which defines where we're looking at.
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+	  
+	  // create a inspectedCamera
+      inspectedCamera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+      // create trackball controls
+      trackballControls = new THREE.TrackballControls(camera);
+
+      // create a render and set the size
+      webGLRenderer = new THREE.WebGLRenderer();
+      webGLRenderer.setClearColor(new THREE.Color(0xeeeeee, 1.0));
+      webGLRenderer.setSize(window.innerWidth, window.innerHeight);
+	  
+	  // add house
+	  
+	  scene.add(house);
+	  mkAllWalls(house);
+
+      // position and point the camera to the center of the scene
+      camera.position.set(-30,40,50);
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+	  
+	  // position and point the inspectedCamera
+	  inspectedCamera.position.set(0,0,0);
+      inspectedCamera.up = new THREE.Vector3(0,1,0);
+	  
+	  // add axis helper
+	  var axisHelper = new THREE.AxisHelper(1.2);
+	  axisHelper.visible = true;
+      scene.add(axisHelper);
+	 
+	  // add spotlights
+      var light1 = new THREE.DirectionalLight(0xffffff);
+      light1.position.set(-30, 40, 50);
+      light1.intensity = 1;
+      scene.add(light1);
+
+      var light2 = new THREE.DirectionalLight(0xffffff);
+      light2.position.set(30, -40, -50);
+      light2.intensity = 1;
+      scene.add(light2);
+	  
+      // add the output of the renderer to the html element
+      $('body').append(webGLRenderer.domElement);
+
+      // call the render function
+      var step = 0;
+
+      // setup the control gui
+      var controls = new function () {
+		this.FirstPersonCamera = false;
+	  };
+
+      var gui = new dat.GUI();
+      var mesh;
+	  var cameraControl = gui.add(controls, 'FirstPersonCamera');
+	  
+	  renderCamera = camera;
+	  
+	  cameraControl.onChange(function (value) {
+        renderCamera = value ? inspectedCamera : camera;
+      });
+	  
+	  targetCamera = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), 
+	                                new THREE.MeshLambertMaterial({transparent: true, opacity: 0}));
+	  targetCamera.position.set(12.5,12,10);
+	  scene.add(targetCamera);
+	  
+	  // load Obj
+	  
+	  var daw = mkDaw(house); // doors and windows
+	  mk3DModels(house);
+	  
+	  // video
+	  
+	  var myVideo = mkVideo();
+	  house.add(myVideo);
+	  
+	  // raycaster
+	  
+	  var projector = new THREE.Projector();
+      document.addEventListener('mousedown', onDocumentMouseDown, false);
+	 
+	  function onDocumentMouseDown(event) {
+	  
+        event.preventDefault();
+        var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
+		projector.unprojectVector(vector, renderCamera);
+		var raycaster = new THREE.Raycaster(renderCamera.position, vector.sub(renderCamera.position).normalize());
+        var intersects = raycaster.intersectObjects([daw[0].children[0], daw[1].children[0],
+													 daw[2].children[0], daw[3].children[0],
+													 daw[4].children[0], daw[5].children[0],
+													 daw[6].children[0], daw[7].children[0],
+													 daw[8].children[0], daw[9].children[0],
+													 daw[10].children[0], daw[11].children[0],
+													 daw[12].children[0], daw[13].children[0],
+													 daw[14].children[0], daw[15].children[0],
+													 daw[16].children[0], daw[17].children[0],
+													 daw[18].children[0], daw[19].children[0],
+													 daw[20].children[0], daw[21].children[0],
+													 daw[22].children[0], daw[23].children[0],
+													 daw[24].children[0], daw[25].children[0],
+													 myVideo.children[0]]);
+		 
+        if (intersects.length > 0) {
+		  intersects[0].object.interact();
+        }
+      }
+	  
+	  // ruoto e scalo la casa
+	  
+	  house.rotation.x = -0.5*Math.PI;
+	  house.scale.set(4,4,4);
+	  
+      function initStats() {
+        var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
+        $('body').append(stats.domElement);
+        return stats;
+      }
+    };
+	
+	function animate(){
+		requestAnimationFrame(animate);
+		render();		
+		update();
+		TWEEN.update();
+	}
+	
+	function render() {
+        trackballControls.update();
+		
+		if (video.readyState === video.HAVE_ENOUGH_DATA) {
+			if (texture) 
+			texture.needsUpdate = true;
+        }
+        
+		webGLRenderer.render(scene, renderCamera);
+    }
+	
+	function update(){
+		var delta = clock.getDelta();
+		var moveDistance = 10*delta; 
+		var runDistance = 30*delta;
+		var rotateAngle = 0.5*Math.PI*delta;  
+		
+		if ( keyboard.pressed("W") )
+			if ( keyboard.pressed("shift") )
+				targetCamera.translateZ( -runDistance );
+			else
+			    targetCamera.translateZ( -moveDistance );
+		if ( keyboard.pressed("S") )
+			targetCamera.translateZ(  moveDistance );
+		if ( keyboard.pressed("A") )
+			targetCamera.translateX( -moveDistance );
+		if ( keyboard.pressed("D") )
+			targetCamera.translateX(  moveDistance );	
+
+		var rotation_matrix = new THREE.Matrix4().identity();
+		if ( keyboard.pressed("up") )
+			targetCamera.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+		if ( keyboard.pressed("down") )
+			targetCamera.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+		if ( keyboard.pressed("Q") )
+			targetCamera.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+		if ( keyboard.pressed("E") )
+			targetCamera.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+
+		var relativeCameraOffset = new THREE.Vector3(0,0,2);
+
+		var cameraOffset = relativeCameraOffset.applyMatrix4( targetCamera.matrixWorld );
+
+		inspectedCamera.position.x = cameraOffset.x;
+		inspectedCamera.position.y = cameraOffset.y;
+		inspectedCamera.position.z = cameraOffset.z;
+		inspectedCamera.lookAt( targetCamera.position );
+
+		stats.update();
+	}
+  
+  	// start project
+	
+	init();
+	animate();
+	
+  </script>  
+ </body>
+</html>
